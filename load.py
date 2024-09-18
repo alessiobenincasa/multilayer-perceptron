@@ -1,48 +1,39 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.model_selection import train_test_split
 
-# Step 1: Load the Dataset
-# Replace 'path_to_your_dataset.csv' with the actual path to your dataset
-df = pd.read_csv('data.csv')
+# Load the dataset
+data = pd.read_csv('data.csv')
 
-# Step 2: Basic Exploration
+# Display first few rows to understand the structure
+print(data.head())
 
-# Display the first few rows of the dataset
-print("First 5 rows of the dataset:")
-print(df.head())
+# Split the dataset into features (X) and target (y)
+X = data.iloc[:, :-1]  # Assuming last column is the target
+y = data.iloc[:, -1]   # Assuming the target column is the last one
 
-# Check for missing values
-print("\nMissing values in each column:")
-print(df.isnull().sum())
+# Split the dataset into training and validation sets (80% training, 20% validation)
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Get summary statistics
-print("\nSummary statistics:")
-print(df.describe())
+# Save the split data to CSV files
+X_train.to_csv('train_data.csv', index=False)
+X_valid.to_csv('valid_data.csv', index=False)
+y_train.to_csv('train_labels.csv', index=False)
+y_valid.to_csv('valid_labels.csv', index=False)
 
-# Check the data types of each column
-print("\nData types of each column:")
-print(df.info())
+# Visualizing the features using scatter plots
+# Example: Plotting the first two features against each other
+plt.figure(figsize=(10, 6))
 
-# Step 3: Visualize the Data
+# Plot malignant and benign data points in different colors
+plt.scatter(X_train.iloc[:, 0], X_train.iloc[:, 1], c=y_train, cmap='coolwarm', label='Training Data')
+plt.scatter(X_valid.iloc[:, 0], X_valid.iloc[:, 1], c=y_valid, marker='x', cmap='coolwarm', label='Validation Data')
 
-# Histograms for each feature
-print("\nVisualizing the distribution of each feature with histograms...")
-df.hist(bins=30, figsize=(20, 15), color='skyblue')
-plt.suptitle("Histogram of All Features", fontsize=16)
-plt.show()
+# Add labels and title
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.title('Feature Visualization: Feature 1 vs Feature 2')
+plt.legend()
 
-# Correlation matrix and heatmap
-print("\nVisualizing the correlation matrix with a heatmap...")
-plt.figure(figsize=(16, 10))
-corr_matrix = df.corr()
-sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm")
-plt.title("Correlation Matrix Heatmap", fontsize=16)
-plt.show()
-
-# Pairplot for a few selected features (optional)
-selected_features = ['mean radius', 'mean texture', 'mean area', 'mean smoothness', 'diagnosis']
-sns.pairplot(df[selected_features], hue='diagnosis', palette='Set1')
-plt.suptitle("Pairplot of Selected Features", y=1.02, fontsize=16)
+# Show plot
 plt.show()
