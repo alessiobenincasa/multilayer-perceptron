@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.metrics import accuracy_score
+import argparse
 
-# Activation Functions
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
@@ -15,20 +17,20 @@ def softmax(x):
     exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
     return exp_x / np.sum(exp_x, axis=1, keepdims=True)
 
-# Loss Function
+
 def binary_cross_entropy(y_true, y_pred):
     return -np.mean(y_true * np.log(y_pred + 1e-9) + (1 - y_true) * np.log(1 - y_pred + 1e-9))
 
-# Multilayer Perceptron
+
 class MLP:
     def __init__(self, input_size, hidden_layers, output_size):
         self.layers = []
         self.biases = []
-        self.learning_rate = 0.0314  # as given in example
+        self.learning_rate = 0.0314  
         self.epochs = 84
         self.batch_size = 8
         
-        # Initialize weights and biases for layers
+        
         layer_sizes = [input_size] + hidden_layers + [output_size]
         for i in range(len(layer_sizes) - 1):
             self.layers.append(np.random.randn(layer_sizes[i], layer_sizes[i + 1]) * 0.1)
@@ -41,14 +43,14 @@ class MLP:
             z = np.dot(self.a_values[-1], self.layers[i]) + self.biases[i]
             self.z_values.append(z)
             if i == len(self.layers) - 1:
-                a = softmax(z)  # Softmax for the output layer
+                a = softmax(z)  
             else:
                 a = sigmoid(z)
             self.a_values.append(a)
         return a
     
     def backward(self, X, y):
-        # Backpropagation
+        
         m = y.shape[0]
         dz = self.a_values[-1] - y
         for i in reversed(range(len(self.layers))):
@@ -63,7 +65,7 @@ class MLP:
         training_loss = []
         validation_loss = []
         for epoch in range(self.epochs):
-            # Forward and backward pass for training
+            
             for start in range(0, X_train.shape[0], self.batch_size):
                 end = start + self.batch_size
                 batch_X = X_train[start:end]
@@ -71,14 +73,14 @@ class MLP:
                 y_pred = self.forward(batch_X)
                 self.backward(batch_X, batch_y)
 
-            # Calculate loss for training and validation data
+            
             y_train_pred = self.forward(X_train)
             train_loss = binary_cross_entropy(y_train, y_train_pred)
 
             y_valid_pred = self.forward(X_valid)
             val_loss = binary_cross_entropy(y_valid, y_valid_pred)
 
-            # Store losses
+            
             training_loss.append(train_loss)
             validation_loss.append(val_loss)
             
@@ -87,47 +89,65 @@ class MLP:
         
         return training_loss, validation_loss
 
-# Dataset loading and preprocessing
-import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
 
-# Assuming 'data.csv' exists with feature columns and a target column for malignant or benign
-data = pd.read_csv('data.csv')
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train a Multilayer Perceptron on breast cancer dataset.")
+    parser.add_argument('--layers', nargs='+', type=int, default=[24, 24], help='Number of neurons in hidden layers.')
+    parser.add_argument('--epochs', type=int, default=84, help='Number of epochs for training.')
+    parser.add_argument('--learning_rate', type=float, default=0.0314, help='Learning rate for gradient descent.')
+    parser.add_argument('--batch_size', type=int, default=8, help='Batch size for training.')
+    parser.add_argument('--data', type=str, default='data.csv', help='Path to the dataset CSV file.')
+    return parser.parse_args()
 
-# Split into features and target
-X = data.iloc[:, :-1].values  # All feature columns
-y = data.iloc[:, -1].values   # Last column for target
 
-# Encode the target variable (M or B) into binary format
-encoder = OneHotEncoder(sparse=False)
-y = encoder.fit_transform(y.reshape(-1, 1))
+if __name__ == '__main__':
+    args = parse_args()
+    
+    
+    data = pd.read_csv(args.data)
 
-# Split dataset into training and validation sets
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    print(data.dtypes)  
 
-# Standardize the data
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_valid = scaler.transform(X_valid)
+    
+    data = data.select_dtypes(include=[np.number])  
 
-# Initialize MLP with 2 hidden layers of 24 neurons each
-mlp = MLP(input_size=X_train.shape[1], hidden_layers=[24, 24], output_size=y.shape[1])
+    
+    y = data.iloc[:, -1].values   
+    X = data.iloc[:, :-1].values  
 
-# Train the model
-training_loss, validation_loss = mlp.train(X_train, y_train, X_valid, y_valid)
+    
+    encoder = OneHotEncoder(sparse_output=False)
+    y = encoder.fit_transform(y.reshape(-1, 1))
 
-# Plot the learning curves
-plt.plot(training_loss, label='Training Loss')
-plt.plot(validation_loss, label='Validation Loss')
-plt.title('Learning Curves')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
+    
+    X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Predict on validation set and evaluate accuracy
-y_pred = mlp.forward(X_valid)
-y_pred_classes = np.argmax(y_pred, axis=1)
-y_valid_classes = np.argmax(y_valid, axis=1)
-accuracy = accuracy_score(y_valid_classes, y_pred_classes)
-print(f'Validation Accuracy: {accuracy * 100:.2f}%')
+    
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)  
+    X_valid = scaler.transform(X_valid)      
+
+    
+    mlp = MLP(input_size=X_train.shape[1], hidden_layers=args.layers, output_size=y.shape[1])
+    mlp.learning_rate = args.learning_rate
+    mlp.epochs = args.epochs
+    mlp.batch_size = args.batch_size
+
+    
+    training_loss, validation_loss = mlp.train(X_train, y_train, X_valid, y_valid)
+
+    
+    plt.plot(training_loss, label='Training Loss')
+    plt.plot(validation_loss, label='Validation Loss')
+    plt.title('Learning Curves')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
+
+    y_pred = mlp.forward(X_valid)
+    y_pred_classes = np.argmax(y_pred, axis=1)
+    y_valid_classes = np.argmax(y_valid, axis=1)
+    accuracy = accuracy_score(y_valid_classes, y_pred_classes)
+    print(f'Validation Accuracy: {accuracy * 100:.2f}%')
