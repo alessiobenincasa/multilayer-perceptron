@@ -1,4 +1,3 @@
-# multilayer-perceptron
 Multilayer Perceptron Project
 Overview
 This project is an introduction to artificial neural networks through the implementation of a Multilayer Perceptron (MLP) to classify breast cancer as either malignant or benign, based on the Wisconsin Breast Cancer dataset.
@@ -31,7 +30,6 @@ Data Splitting Program:
 This program will split the dataset into training and validation sets.
 To run the program:
 bash
-Copier le code
 python load.py
 Training Program:
 
@@ -39,12 +37,10 @@ Train the MLP using backpropagation and gradient descent.
 Save the model (network topology and weights) after training.
 To run the program:
 bash
-Copier le code
 python train.py
 Prediction Program:
 
 Load the saved model, perform predictions, and evaluate its accuracy.
 To run the program:
 bash
-Copier le code
 python predict.py
