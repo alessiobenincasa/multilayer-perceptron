@@ -15,7 +15,7 @@ Le projet nécessite de construire et d'entraîner un réseau de neurones à par
 2. **Structure du réseau de neurones** :
    - Vous devez implémenter un réseau de neurones feedforward avec au moins **deux couches cachées**.
    - Chaque couche doit être constituée de perceptrons avec des **fonctions d'activation** personnalisables.
-   - La couche de sortie utilisera la **fonction softmax** pour la classification binaire (malin vs bénin).
+   - La couche de sortie utilisera la **fonction sigmoid** pour la classification binaire (malin vs bénin).
 
 3. **Entraînement** :
    - Utilisez la **rétropropagation** et la **descente de gradient** pour entraîner le modèle.
