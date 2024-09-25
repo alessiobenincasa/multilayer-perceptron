@@ -1,46 +1,49 @@
 Multilayer Perceptron Project
 Overview
-This project is an introduction to artificial neural networks through the implementation of a Multilayer Perceptron (MLP) to classify breast cancer as either malignant or benign, based on the Wisconsin Breast Cancer dataset.
+Ce projet est une introduction aux réseaux de neurones artificiels à travers l'implémentation d'un perceptron multicouche (MLP) pour classer le cancer du sein en tant que malin ou bénin, basé sur le jeu de données Wisconsin Breast Cancer.
 
-Project Structure
-The project requires you to build and train a neural network from scratch, without the use of external libraries that handle neural networks. The implementation includes:
+Structure du projet
+Le projet nécessite de construire et d'entraîner un réseau de neurones à partir de zéro, sans utiliser de bibliothèques externes qui gèrent les réseaux de neurones. L'implémentation inclut :
 
-Data Processing:
+Traitement des données :
 
-The dataset is provided and contains features that describe the characteristics of cell nuclei from breast mass tissue samples.
-Preprocess the data before training and split it into training and validation sets.
-Neural Network Structure:
+Le jeu de données est fourni et contient des caractéristiques qui décrivent les caractéristiques des noyaux cellulaires des échantillons de tissu mammaire.
+Prétraitez les données avant l'entraînement et divisez-les en ensembles d'entraînement et de validation.
+Structure du réseau de neurones :
 
-You must implement a feedforward neural network with at least two hidden layers.
-Each layer should consist of perceptrons with customizable activation functions.
-The output layer will use the softmax function for binary classification (malignant vs. benign).
-Training:
+Vous devez implémenter un réseau de neurones feedforward avec au moins deux couches cachées.
+Chaque couche doit être constituée de perceptrons avec des fonctions d'activation personnalisables.
+La couche de sortie utilisera la fonction softmax pour la classification binaire (malin vs bénin).
+Entraînement :
 
-Use backpropagation and gradient descent to train the model.
-Display training and validation metrics at each epoch to monitor progress.
-Evaluation:
+Utilisez la rétropropagation et la descente de gradient pour entraîner le modèle.
+Affichez les métriques d'entraînement et de validation à chaque époque pour suivre les progrès.
+Évaluation :
 
-Evaluate the model using binary cross-entropy loss.
-Implement learning curves to visualize the loss and accuracy during training.
-Mandatory Programs
-You will create three main programs:
+Évaluez le modèle en utilisant la perte d'entropie croisée binaire.
+Implémentez des courbes d'apprentissage pour visualiser la perte et la précision pendant l'entraînement.
+Programmes obligatoires
+Vous devrez créer trois programmes principaux :
 
-Data Splitting Program:
+Programme de séparation des données :
 
-This program will split the dataset into training and validation sets.
-To run the program:
+Ce programme divisera le jeu de données en deux parties : une pour l'entraînement et une pour la validation.
+Pour exécuter le programme :
 bash
+Copier le code
 python load.py
-Training Program:
+Programme d'entraînement :
 
-Train the MLP using backpropagation and gradient descent.
-Save the model (network topology and weights) after training.
-To run the program:
+Entraînez le MLP en utilisant la rétropropagation et la descente de gradient.
+Sauvegardez le modèle (topologie du réseau et poids) après l'entraînement.
+Pour exécuter le programme :
 bash
+Copier le code
 python train.py
-Prediction Program:
+Programme de prédiction :
 
-Load the saved model, perform predictions, and evaluate its accuracy.
-To run the program:
+Chargez le modèle sauvegardé, effectuez des prédictions et évaluez sa précision.
+Pour exécuter le programme :
 bash
+Copier le code
 python predict.py
